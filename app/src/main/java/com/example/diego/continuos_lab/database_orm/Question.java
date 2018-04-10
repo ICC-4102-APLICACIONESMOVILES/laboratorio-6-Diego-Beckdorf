@@ -17,6 +17,17 @@ public class Question {
     private String questionId;
     private String formId;
     private String statement;
-    
 
+    public Question(){
+    }
+
+    @NonNull
+    public String getQuestionId() {return questionId;}
+    public void setQuestionId(@NonNull String questionId) {this.questionId = questionId;}
+
+    public String getFormId() {return formId;}
+    public void setFormId(String formId) {this.formId = formId;}
+
+    public String getStatement() {return statement;}
+    public void setStatement(String statement) {this.statement = statement;}
 }
