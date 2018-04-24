@@ -23,4 +23,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="form_name_hint">Nombre</string>
+    <string name="form_date_hint">date dd/mm/yyyy</string>
+    <string name="form_description_hint">fill any description here.</string>
+    <string name="new_form_title">New Form</string>
+    <string name="new_form_submit">Submit</string>
 </resources>

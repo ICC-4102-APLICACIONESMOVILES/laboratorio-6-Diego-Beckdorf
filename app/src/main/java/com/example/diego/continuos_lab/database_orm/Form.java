@@ -14,7 +14,11 @@ public class Form {
     private String category;
     private String description;
 
-    public Form() {
+    public Form(String name, String date, String category, String description) {
+        this.name = name;
+        this.date = date;
+        this.category = category;
+        this.description = description;
     }
 
     @NonNull

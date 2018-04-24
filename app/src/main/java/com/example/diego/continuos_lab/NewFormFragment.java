@@ -4,9 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.example.diego.continuos_lab.database_interface.DaoAccess;
+import com.example.diego.continuos_lab.database_orm.Form;
 
 
 /**
@@ -52,10 +57,36 @@ public class NewFormFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        final MainActivity activity = (MainActivity) getActivity();
+        activity.setContentView(R.layout.fragment_new_form);
+
+        final Button button = activity.findViewById(R.id.formSubmit);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                View nameView = v.findViewById(R.id.name);
+                final String name = nameView.toString();
+                View dateView = v.findViewById(R.id.date);
+                final String date = dateView.toString();
+                View categoryView = v.findViewById(R.id.category);
+                final String category = categoryView.toString();
+                View descriptionView = v.findViewById(R.id.description);
+                final String description = descriptionView.toString();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Form newForm = new Form(name, date, category, description);
+                        DaoAccess dao = activity.getAppDatabase().daoAccess();
+                        dao.insertSingleForm(newForm);
+                    }
+                }).start();
+            }
+        });
     }
 
     @Override

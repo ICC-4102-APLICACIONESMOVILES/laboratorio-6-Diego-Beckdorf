@@ -3,10 +3,21 @@ package com.example.diego.continuos_lab;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+
+import com.example.diego.continuos_lab.database_interface.DaoAccess;
+import com.example.diego.continuos_lab.database_orm.Form;
+
+import java.util.List;
 
 
 /**
@@ -52,9 +63,34 @@ public class FormFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+
+        MainActivity activity = (MainActivity) getActivity();
+        Context context = getContext();
+        TableLayout tableLayout = activity.findViewById(R.id.formsTable);
+
+        DaoAccess dao = activity.getAppDatabase().daoAccess();
+        List<Form> forms = dao.getForms();
+
+        for (int i = 0; i < forms.size(); i++) {
+            TableRow tr = new TableRow(context);
+            TextView id = new TextView(context);
+            id.setText(forms.get(i).getFormId());
+            tr.addView(id);
+            TextView name = new TextView(context);
+            name.setText(forms.get(i).getName());
+            tr.addView(name);
+            TextView date = new TextView(context);
+            date.setText(forms.get(i).getDate());
+            tr.addView(date);
+            TextView description = new TextView(context);
+            description.setText(forms.get(i).getDescription());
+            tr.addView(description);
+            tableLayout.addView(tr);
         }
     }
 
@@ -64,6 +100,7 @@ public class FormFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_form, container, false);
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
