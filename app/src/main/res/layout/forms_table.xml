@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     android:id="@+id/formsTable">
     <TableRow>
-        <TextView android:text="Id"
-            android:padding="3dip"/>
         <TextView android:text="Nombre"
             android:padding="3dip"/>
         <TextView android:text="Fecha"

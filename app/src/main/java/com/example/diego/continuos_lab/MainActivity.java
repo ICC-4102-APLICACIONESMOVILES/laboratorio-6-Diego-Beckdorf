@@ -14,11 +14,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.diego.continuos_lab.database.AppDatabase;
+import com.example.diego.continuos_lab.database_interface.DaoAccess;
+import com.example.diego.continuos_lab.database_orm.Form;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+                   NewFormFragment.NewFormListener
+{
 
     private static final String DATABASE_NAME = "forms_db";
     private AppDatabase appDatabase;
@@ -35,15 +40,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -117,49 +113,67 @@ public class MainActivity extends AppCompatActivity
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-        if (findViewById(R.id.fragment_container) != null) {
-
-            if (id == R.id.nav_home) {
-                DefaultFragment defaultFragment = new DefaultFragment();
-                defaultFragment.setArguments(getIntent().getExtras());
-                // Replace fragment
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, defaultFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            } else if (id == R.id.nav_new_form) {
-                NewFormFragment newFormFragment = new NewFormFragment();
-                newFormFragment.setArguments(getIntent().getExtras());
-                // Replace fragment
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, newFormFragment );
-                transaction.addToBackStack(null);
-                transaction.commit();
-            } else if (id == R.id.nav_forms) {
-                FormFragment formFragment = new FormFragment();
-                formFragment.setArguments(getIntent().getExtras());
-                // Replace fragment
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, formFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            } else if (id == R.id.nav_summary) {
-                SummaryFragment summaryFragment = new SummaryFragment();
-                summaryFragment.setArguments(getIntent().getExtras());
-                // Replace fragment
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, summaryFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        }
+        this.changeFragment(id);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    public void changeFragment(int fragmentId) {
+        if (findViewById(R.id.fragment_container) != null) {
+
+            if (fragmentId == R.id.nav_home) {
+                DefaultFragment defaultFragment = new DefaultFragment();
+                defaultFragment.setArguments(getIntent().getExtras());
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, defaultFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            } else if (fragmentId == R.id.nav_new_form) {
+                NewFormFragment newFormFragment = new NewFormFragment();
+                newFormFragment.setArguments(getIntent().getExtras());
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, newFormFragment );
+                transaction.addToBackStack(null);
+                transaction.commit();
+            } else if (fragmentId == R.id.nav_forms) {
+                FormFragment formFragment = new FormFragment();
+                formFragment.setArguments(getIntent().getExtras());
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, formFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            } else if (fragmentId == R.id.nav_summary) {
+                SummaryFragment summaryFragment = new SummaryFragment();
+                summaryFragment.setArguments(getIntent().getExtras());
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, summaryFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        }
+    }
+
     public AppDatabase getAppDatabase() {
         return appDatabase;
+    }
+
+    @Override
+    public void newForm(final String name, final String date, final String category, final String description) {
+        final MainActivity activity = this;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DaoAccess dao = getAppDatabase().daoAccess();
+                int id = dao.getForms().size();
+                Form form = new Form(String.format("%s", id), name, date, category, description);
+                try {
+                    dao.insertSingleForm(form);
+                } catch (Exception e) {
+                    System.out.println("No");
+                }
+            }
+        }).start();
     }
 }

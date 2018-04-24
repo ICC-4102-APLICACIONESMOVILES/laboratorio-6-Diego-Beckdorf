@@ -3,7 +3,9 @@ package com.example.diego.continuos_lab;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.LocaleList;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.diego.continuos_lab.database_interface.DaoAccess;
 import com.example.diego.continuos_lab.database_orm.Form;
@@ -68,14 +71,39 @@ public class FormFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
 
-        MainActivity activity = (MainActivity) getActivity();
-        Context context = getContext();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_form, container, false);
+
+
+        final MainActivity activity = (MainActivity) getActivity();
         TableLayout tableLayout = activity.findViewById(R.id.formsTable);
 
-        DaoAccess dao = activity.getAppDatabase().daoAccess();
-        List<Form> forms = dao.getForms();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DaoAccess dao = activity.getAppDatabase().daoAccess();
+                final List<Form> forms = dao.getForms();
+                Handler mainHandler = new Handler(Looper.getMainLooper());
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        populateTable(forms);
+                    }
+                });
+            }});
 
+        return view;
+    }
+
+    public void populateTable(List<Form> forms) {
+        final MainActivity activity = (MainActivity) getActivity();
+        TableLayout tableLayout = activity.findViewById(R.id.formsTable);
+        Context context = getContext();
         for (int i = 0; i < forms.size(); i++) {
             TableRow tr = new TableRow(context);
             TextView id = new TextView(context);
@@ -92,13 +120,6 @@ public class FormFragment extends Fragment {
             tr.addView(description);
             tableLayout.addView(tr);
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_form, container, false);
     }
 
 

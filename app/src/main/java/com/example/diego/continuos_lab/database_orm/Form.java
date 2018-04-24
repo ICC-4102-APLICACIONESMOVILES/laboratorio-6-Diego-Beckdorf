@@ -14,7 +14,8 @@ public class Form {
     private String category;
     private String description;
 
-    public Form(String name, String date, String category, String description) {
+    public Form(@NonNull String formId, String name, String date, String category, String description) {
+        this.formId = formId;
         this.name = name;
         this.date = date;
         this.category = category;
