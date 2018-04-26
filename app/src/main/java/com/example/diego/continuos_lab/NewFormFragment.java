@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.diego.continuos_lab.database_interface.DaoAccess;
@@ -69,14 +71,15 @@ public class NewFormFragment extends Fragment {
         final Button button = view.findViewById(R.id.formSubmit);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                View nameView = activity.findViewById(R.id.name);
-                final String name = nameView.toString();
-                View dateView = activity.findViewById(R.id.date);
-                final String date = dateView.toString();
-                View categoryView = activity.findViewById(R.id.category);
-                final String category = categoryView.toString();
-                View descriptionView = activity.findViewById(R.id.description);
-                final String description = descriptionView.toString();
+                TextView nameView = activity.findViewById(R.id.name);
+                System.out.println(nameView.getText());
+                final String name = nameView.getText().toString();
+                TextView dateView = activity.findViewById(R.id.date);
+                final String date = dateView.getText().toString();
+                Spinner categoryView = activity.findViewById(R.id.category);
+                final String category = categoryView.getSelectedItem().toString();
+                TextView descriptionView = activity.findViewById(R.id.description);
+                final String description = descriptionView.getText().toString();
                 listener.newForm(name, date, category, description);
             }
         });

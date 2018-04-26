@@ -5,6 +5,6 @@
     android:layout_height="match_parent"
     tools:context="com.example.diego.continuos_lab.NewFormFragment">
 
-    <include layout="@layout/forms_table" />
+    <include layout="@layout/forms_listview" />
 
 </android.support.constraint.ConstraintLayout>
