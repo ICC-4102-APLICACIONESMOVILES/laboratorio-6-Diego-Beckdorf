@@ -20,6 +20,15 @@ public class FormFragment extends Fragment {
     private Context context;
     private static final String ARG_FORMS = "forms";
 
+    private FormDeleter deleterListener;
+    public interface FormDeleter {
+        void callFormDelete(Form form);
+    }
+
+    public FormDeleter getDeleterListener() {
+        return deleterListener;
+    }
+
     public FormFragment() {
         // Required empty public constructor
     }
@@ -39,10 +48,13 @@ public class FormFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        if (context instanceof FormDeleter) {
+            deleterListener = (FormDeleter) context;
+        }
     }
 
     public void populateTable(List<Form> forms) {
-        ListAdapter listAdapter = new FormListAdapter(context, forms);
+        ListAdapter listAdapter = new FormListAdapter(this, context, forms);
         ListView formsListView = getView().findViewById(R.id.formsListView);
         formsListView.setAdapter(listAdapter);
     }

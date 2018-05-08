@@ -1,12 +1,14 @@
 package com.example.diego.continuos_lab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 /**
@@ -62,8 +64,20 @@ public class DefaultFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_default, container, false);
+        View view =  inflater.inflate(R.layout.fragment_default, container, false);
+
+        Button loginBtn = view.findViewById(R.id.main_login_btn);
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent loginIntent = new Intent(getContext(), Login.class);
+                startActivity(loginIntent);
+            }
+        });
+        return view;
     }
+
+
+
 
     /**
      * This interface must be implemented by activities that contain this

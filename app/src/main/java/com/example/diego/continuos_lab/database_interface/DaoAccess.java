@@ -56,6 +56,11 @@ public interface DaoAccess {
     AnswerSet getAnswerSet(int answerSetId);
     //endregion
 
+    //region Get by relationship
+    @Query ("SELECT * FROM Question WHERE formId = :formId")
+    List<Question> getFormQuestions(String formId);
+    //endregion
+
     //region Update
     @Update
     void updateUser(User user);
