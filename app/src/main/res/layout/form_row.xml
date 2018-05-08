@@ -44,7 +44,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp" />
         <Button
-            android:id="@+id/formDetail"
+            android:id="@+id/formReponse"
             android:background="@color/colorPrimary"
             android:text="O"
             android:hint="details"

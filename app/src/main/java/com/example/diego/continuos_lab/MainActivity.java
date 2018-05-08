@@ -165,6 +165,13 @@ public class MainActivity extends AppCompatActivity
                 transaction.replace(R.id.fragment_container, summaryFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
+            } else if (fragmentId == R.id.form_response_submit) {
+                FormResponseFragment responseFragment = new FormResponseFragment();
+                responseFragment.setArguments(getIntent().getExtras());
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, responseFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         }
     }

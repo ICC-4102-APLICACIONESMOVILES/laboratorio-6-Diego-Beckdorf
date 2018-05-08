@@ -23,14 +23,14 @@ import java.util.List;
 public class QuestionListAdapter extends ArrayAdapter<Question> {
 
     public QuestionListAdapter(@NonNull FormQuestionsFragment frag, @NonNull Context context, @NonNull List<Question> objects) {
-        super(context, R.layout.question_row, objects);
+        super(context, R.layout.new_form_question, objects);
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        @SuppressLint("ViewHolder") View questionRowView = inflater.inflate(R.layout.question_row,
+        @SuppressLint("ViewHolder") View questionRowView = inflater.inflate(R.layout.new_form_question,
                 parent, false);
 
         final Question question = getItem(position);

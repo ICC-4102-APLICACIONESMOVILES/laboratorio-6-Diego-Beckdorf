@@ -15,8 +15,11 @@ import android.widget.TextView;
 
 import com.example.diego.continuos_lab.FormFragment;
 import com.example.diego.continuos_lab.FormQuestionsFragment;
+import com.example.diego.continuos_lab.FormResponseFragment;
+import com.example.diego.continuos_lab.MainActivity;
 import com.example.diego.continuos_lab.R;
 import com.example.diego.continuos_lab.database_orm.Form;
+import com.google.android.gms.location.FusedLocationProviderClient;
 
 import java.util.List;
 
@@ -42,7 +45,7 @@ public class FormListAdapter extends ArrayAdapter<Form>{
         TextView category = formRowView.findViewById(R.id.category);
         TextView description = formRowView.findViewById(R.id.description);
         Button deleteButton = formRowView.findViewById(R.id.formDelete);
-        Button detailButton = formRowView.findViewById(R.id.formDetail);
+        Button responseButton = formRowView.findViewById(R.id.formReponse);
 
         assert form != null;
         name.setText(form.getName());
@@ -55,9 +58,10 @@ public class FormListAdapter extends ArrayAdapter<Form>{
                 frag.getDeleterListener().callFormDelete(form);
             }
         });
-        detailButton.setOnClickListener(new View.OnClickListener() {
+        responseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                MainActivity act = (MainActivity) getContext();
+                act.changeFragment(R.id.form_response_submit);
             }
         });
 

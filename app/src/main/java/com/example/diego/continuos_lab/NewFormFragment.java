@@ -13,12 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.diego.continuos_lab.database_interface.DaoAccess;
 import com.example.diego.continuos_lab.database_orm.Form;
+import com.google.android.gms.location.FusedLocationProviderClient;
 
 
 /**
@@ -68,8 +70,8 @@ public class NewFormFragment extends Fragment {
 
         this.activity = (MainActivity) getActivity();
 
-        final Button button = view.findViewById(R.id.formSubmit);
-        button.setOnClickListener(new View.OnClickListener() {
+        final Button submitButton = view.findViewById(R.id.formSubmit);
+        submitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 TextView nameView = activity.findViewById(R.id.name);
                 System.out.println(nameView.getText());
@@ -81,6 +83,15 @@ public class NewFormFragment extends Fragment {
                 TextView descriptionView = activity.findViewById(R.id.description);
                 final String description = descriptionView.getText().toString();
                 listener.newForm(name, date, category, description);
+            }
+        });
+
+        final ListView questionsContainerList = view.findViewById(R.id.questions_container_list);
+        final Button addQuestionButton = view.findViewById(R.id.new_form_add_question_btn);
+        addQuestionButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                View newQuestion = getLayoutInflater().inflate(R.layout.new_form_question, null);
+                questionsContainerList.addFooterView(newQuestion);
             }
         });
         return view;

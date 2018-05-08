@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +27,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".Login"></activity>
+
+        <!--
+        Location API
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDgUij_XvA7wnlHeqvToP5WZtd3RrBajXI"/>
+
+        
+
     </application>
 
 </manifest>
