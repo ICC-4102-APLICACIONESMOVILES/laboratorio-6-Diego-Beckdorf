@@ -29,7 +29,7 @@ public class NewQuestionListAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        @SuppressLint("ViewHolder") View questionRowView = inflater.inflate(R.layout.answer_question_row,
+        @SuppressLint("ViewHolder") View questionRowView = inflater.inflate(R.layout.new_question_row,
                 parent, false);
 
         final String question_statement = getItem(position);

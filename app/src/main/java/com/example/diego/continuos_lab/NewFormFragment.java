@@ -24,6 +24,8 @@ import com.example.diego.continuos_lab.database_orm.Question;
 import com.example.diego.continuos_lab.layout_helpers.NewQuestionListAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -56,6 +58,8 @@ public class NewFormFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String[] baseList = new String[] {""};
+        questionStatementList = new ArrayList<String>(Arrays.asList(baseList));
     }
 
     @Override
