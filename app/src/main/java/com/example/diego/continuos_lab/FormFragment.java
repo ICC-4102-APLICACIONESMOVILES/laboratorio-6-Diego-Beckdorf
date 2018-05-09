@@ -58,9 +58,4 @@ public class FormFragment extends Fragment {
         ListView formsListView = getView().findViewById(R.id.formsListView);
         formsListView.setAdapter(listAdapter);
     }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

@@ -20,7 +20,11 @@ import android.widget.Toast;
 
 import com.example.diego.continuos_lab.database_interface.DaoAccess;
 import com.example.diego.continuos_lab.database_orm.Form;
+import com.example.diego.continuos_lab.database_orm.Question;
+import com.example.diego.continuos_lab.layout_helpers.NewQuestionListAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
+
+import java.util.List;
 
 
 /**
@@ -34,6 +38,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 public class NewFormFragment extends Fragment {
 
     private MainActivity activity;
+    private List<String> questionStatementList;
 
     public interface NewFormListener{
         void newForm(String name, String date, String category, String description);
@@ -87,11 +92,15 @@ public class NewFormFragment extends Fragment {
         });
 
         final ListView questionsContainerList = view.findViewById(R.id.questions_container_list);
+        final NewQuestionListAdapter questionListAdapter = new NewQuestionListAdapter
+                (getContext(), questionStatementList);
+        questionsContainerList.setAdapter(questionListAdapter);
+
         final Button addQuestionButton = view.findViewById(R.id.new_form_add_question_btn);
         addQuestionButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                View newQuestion = getLayoutInflater().inflate(R.layout.new_form_question, null);
-                questionsContainerList.addFooterView(newQuestion);
+                questionStatementList.add("");
+                questionListAdapter.notifyDataSetChanged();
             }
         });
         return view;

@@ -30,6 +30,19 @@ public interface DaoAccess {
     void insertSingleAnswerSet(AnswerSet answerSet);
     //endregion
 
+    //region multi Insertion
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUsers(List<User> users);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertForms(List<Form> forms);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertQuestions(List<Question> questions);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAnswers(List<Answer> answers);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAnswerSets(List<AnswerSet> answerSets);
+    //endregion
+
     //region Get all
     @Query  ("SELECT * FROM User")
     List<User> getUsers();

@@ -2,12 +2,9 @@ package com.example.diego.continuos_lab;
 
 import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,23 +15,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.diego.continuos_lab.database.AppDatabase;
 import com.example.diego.continuos_lab.database_interface.DaoAccess;
+import com.example.diego.continuos_lab.database_orm.AnswerSet;
 import com.example.diego.continuos_lab.database_orm.Form;
 import com.example.diego.continuos_lab.database_orm.Question;
 
 import java.util.List;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.RunnableFuture;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                    NewFormFragment.NewFormListener,
                    FormFragment.FormDeleter,
-                   FormQuestionsFragment.FormQuestionProvider{
+                   AnswerFormFragment.FormResponseSaver{
 
     private static final String DATABASE_NAME = "forms_db";
     private AppDatabase appDatabase;
@@ -126,14 +121,15 @@ public class MainActivity extends AppCompatActivity
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-        this.changeFragment(id);
+        this.navChangeFragment(id);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    public void changeFragment(int fragmentId) {
+
+    public void navChangeFragment(int fragmentId) {
         if (findViewById(R.id.fragment_container) != null) {
 
             if (fragmentId == R.id.nav_home) {
@@ -165,29 +161,28 @@ public class MainActivity extends AppCompatActivity
                 transaction.replace(R.id.fragment_container, summaryFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
-            } else if (fragmentId == R.id.form_response_submit) {
-                FormResponseFragment responseFragment = new FormResponseFragment();
-                responseFragment.setArguments(getIntent().getExtras());
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, responseFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
             }
         }
     }
 
-    public void setFormQuestionsFragment(Form form) {
-        FormQuestionsFragment formQuestionsFragment = new FormQuestionsFragment();
-        formQuestionsFragment .setArguments(getIntent().getExtras());
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, formQuestionsFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+
+    public void loadFormResponseFragment(String formId) {
+        if (findViewById(R.id.fragment_container) != null) {
+            AnswerFormFragment responseFragment = new AnswerFormFragment();
+            responseFragment.setArguments(getIntent().getExtras());
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, responseFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+            renderQuestionsListView(responseFragment, formId);
+        }
     }
+
 
     public AppDatabase getAppDatabase() {
         return appDatabase;
     }
+
 
     private void populateFormListFragment(final FormFragment fragment) {
         @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
@@ -204,6 +199,27 @@ public class MainActivity extends AppCompatActivity
                 List<Form> forms = dao.getForms();
                 Message msg = new Message();
                 msg.obj = forms;
+                handler.sendMessage(msg);
+            }
+        }).start();
+    }
+
+
+    private void renderQuestionsListView(final AnswerFormFragment fragment, final String formId) {
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                List<Question> questions = (List<Question>) msg.obj;
+                fragment.renderQuestions(questions);
+            }
+        };
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DaoAccess dao = getAppDatabase().daoAccess();
+                List<Question> questions = dao.getFormQuestions(formId);
+                Message msg = new Message();
+                msg.obj = questions;
                 handler.sendMessage(msg);
             }
         }).start();
@@ -258,12 +274,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void getFormQuestions(final Form form) {
+    public void saveResponse(final List<AnswerSet> answerSets) {
+        //TODO: Get answers on the onClickListener
         @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                List<Question> daoResponse = (List<Question>) msg.obj;
-                //TODO: load listview adapter for form questions view
+                boolean daoResponse = (boolean) msg.obj;
+                String toastMessage;
+                if (daoResponse) {
+                    toastMessage = "Response saved";
+                } else {
+                    toastMessage = "Failed to save response";
+                }
+                Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+                MainActivity.this.navChangeFragment(R.id.nav_forms);
             }
         };
         new Thread(new Runnable() {
@@ -271,7 +295,14 @@ public class MainActivity extends AppCompatActivity
             public void run() {
                 DaoAccess dao = getAppDatabase().daoAccess();
                 Message msg = new Message();
-                msg.obj = dao.getFormQuestions(form.getFormId());
+                try {
+                    dao.insertAnswerSets(answerSets);
+                    msg.obj = true;
+                } catch (Exception e) {
+                    msg.obj = false;
+                } finally {
+                    handler.sendMessage(msg);
+                }
             }
         }).start();
     }
