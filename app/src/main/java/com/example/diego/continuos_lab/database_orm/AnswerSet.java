@@ -18,23 +18,23 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
                                    onDelete = CASCADE)})
 public class AnswerSet {
     @NonNull
-    @PrimaryKey
-    private String answerSetId;
+    @PrimaryKey(autoGenerate = true)
+    private long answerSetId;
     @NonNull
-    private String questionId;
+    private long questionId;
     @NonNull
-    private String answerId;
+    private long answerId;
 
     public AnswerSet(){
     }
 
     @NonNull
-    public String getAnswerSetId() {return answerSetId;}
-    public void setAnswerSetId(@NonNull String answerSetId) {this.answerSetId = answerSetId;}
+    public long getAnswerSetId() {return answerSetId;}
+    public void setAnswerSetId(@NonNull long answerSetId) {this.answerSetId = answerSetId;}
 
-    public String getAnswerId() {return answerId;}
-    public void setAnswerId(String answerId) {this.answerId = answerId;}
+    public long getAnswerId() {return answerId;}
+    public void setAnswerId(long answerId) {this.answerId = answerId;}
 
-    public String getQuestionId() {return questionId;}
-    public void setQuestionId(String questionId) {this.questionId = questionId;}
+    public long getQuestionId() {return questionId;}
+    public void setQuestionId(long questionId) {this.questionId = questionId;}
 }

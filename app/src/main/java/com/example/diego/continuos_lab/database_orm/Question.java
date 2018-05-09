@@ -13,20 +13,22 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
                                   onDelete = CASCADE))
 public class Question {
     @NonNull
-    @PrimaryKey
-    private String questionId;
-    private String formId;
+    @PrimaryKey(autoGenerate = true)
+    private long questionId;
+    private long formId;
     private String statement;
 
-    public Question(){
+    public Question(long formId, String statement){
+        this.formId = formId;
+        this.statement = statement;
     }
 
     @NonNull
-    public String getQuestionId() {return questionId;}
-    public void setQuestionId(@NonNull String questionId) {this.questionId = questionId;}
+    public long getQuestionId() {return questionId;}
+    public void setQuestionId(@NonNull long questionId) {this.questionId = questionId;}
 
-    public String getFormId() {return formId;}
-    public void setFormId(String formId) {this.formId = formId;}
+    public long getFormId() {return formId;}
+    public void setFormId(long formId) {this.formId = formId;}
 
     public String getStatement() {return statement;}
     public void setStatement(String statement) {this.statement = statement;}

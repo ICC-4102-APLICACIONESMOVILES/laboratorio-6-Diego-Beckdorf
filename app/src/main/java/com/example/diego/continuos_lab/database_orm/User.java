@@ -9,8 +9,8 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 @Entity
 public class User {
     @NonNull
-    @PrimaryKey
-    private String userId;
+    @PrimaryKey(autoGenerate = true)
+    private long userId;
     private String firstName;
     private String lastName;
     private String username;
@@ -20,8 +20,8 @@ public class User {
     }
 
     @NonNull
-    public String getUserId() {return userId;}
-    public void setUserId(@NonNull String userId) {this.userId = userId;}
+    public long getUserId() {return userId;}
+    public void setUserId(@NonNull long userId) {this.userId = userId;}
 
     public String getFirstName() {return firstName;}
     public void setFirstName(String firstName) {this.firstName = firstName;}

@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void loadFormResponseFragment(String formId) {
+    public void loadFormResponseFragment(long formId) {
         if (findViewById(R.id.fragment_container) != null) {
             AnswerFormFragment responseFragment = new AnswerFormFragment();
             responseFragment.setArguments(getIntent().getExtras());
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void renderQuestionsListView(final AnswerFormFragment fragment, final String formId) {
+    private void renderQuestionsListView(final AnswerFormFragment fragment, final long formId) {
         @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -226,16 +226,38 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void newForm(final String name, final String date, final String category, final String description) {
+    public void newForm(final String name, final String date, final String category,
+                        final String description, final List<String> questionStatementList) {
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                String toastMessage = (String) msg.obj;
+                Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+                MainActivity.this.navChangeFragment(R.id.nav_forms);
+            }
+        };
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Message msg = new Message();
                 DaoAccess dao = getAppDatabase().daoAccess();
-                int id = dao.getForms().size();
-                Form form = new Form(String.format("%s", id), name, date, category, description);
+                Form form = new Form(name, date, category, description);
                 try {
-                    dao.insertSingleForm(form);
-                } catch (Exception e) { }
+                    long formId = dao.insertSingleForm(form);
+                    Question question;
+                    for (int i = 0; i < questionStatementList.size(); i++) {
+                        question = new Question(formId, questionStatementList.get(i));
+                        System.out.println("Got statement");
+                        dao.insertSingleQuestion(question);
+                        System.out.println("Question inserted");
+                    }
+                    msg.obj = "Form created!";
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    msg.obj = "Could not create form.";
+                } finally {
+                    handler.sendMessage(msg);
+                }
             }
         }).start();
     }

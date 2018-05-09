@@ -43,7 +43,8 @@ public class NewFormFragment extends Fragment {
     private List<String> questionStatementList;
 
     public interface NewFormListener{
-        void newForm(String name, String date, String category, String description);
+        void newForm(String name, String date, String category, String description,
+                     List<String> questionStatements);
     }
     private NewFormListener listener;
 
@@ -83,7 +84,6 @@ public class NewFormFragment extends Fragment {
         submitButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 TextView nameView = activity.findViewById(R.id.name);
-                System.out.println(nameView.getText());
                 final String name = nameView.getText().toString();
                 TextView dateView = activity.findViewById(R.id.date);
                 final String date = dateView.getText().toString();
@@ -91,7 +91,7 @@ public class NewFormFragment extends Fragment {
                 final String category = categoryView.getSelectedItem().toString();
                 TextView descriptionView = activity.findViewById(R.id.description);
                 final String description = descriptionView.getText().toString();
-                listener.newForm(name, date, category, description);
+                listener.newForm(name, date, category, description, questionStatementList);
             }
         });
 

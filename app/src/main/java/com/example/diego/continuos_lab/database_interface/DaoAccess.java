@@ -19,15 +19,15 @@ import java.util.List;
 public interface DaoAccess {
     //region Single Insertion
     @Insert
-    void insertSingleUSer(User user);
+    long insertSingleUSer(User user);
     @Insert
-    void insertSingleForm(Form form);
+    long insertSingleForm(Form form);
     @Insert
-    void insertSingleQuestion(Question question);
+    long insertSingleQuestion(Question question);
     @Insert
-    void insertSingleAnswer(Answer answer);
+    long insertSingleAnswer(Answer answer);
     @Insert
-    void insertSingleAnswerSet(AnswerSet answerSet);
+    long insertSingleAnswerSet(AnswerSet answerSet);
     //endregion
 
     //region multi Insertion
@@ -58,20 +58,20 @@ public interface DaoAccess {
 
     //region Get by id
     @Query ("SELECT * FROM User WHERE userId = :userId")
-    User getUser(int userId);
+    User getUser(long userId);
     @Query ("SELECT * FROM Form WHERE formId = :formId")
-    Form getForm(int formId);
+    Form getForm(long formId);
     @Query ("SELECT * FROM Question WHERE questionId = :questionId")
-    Question getQuestion(int questionId);
+    Question getQuestion(long questionId);
     @Query ("SELECT * FROM Answer WHERE answerId = :answerId")
-    Answer getAnswer(int answerId);
+    Answer getAnswer(long answerId);
     @Query ("SELECT * FROM AnswerSet WHERE answerSetId = :answerSetId")
-    AnswerSet getAnswerSet(int answerSetId);
+    AnswerSet getAnswerSet(long answerSetId);
     //endregion
 
     //region Get by relationship
     @Query ("SELECT * FROM Question WHERE formId = :formId")
-    List<Question> getFormQuestions(String formId);
+    List<Question> getFormQuestions(long formId);
     //endregion
 
     //region Update

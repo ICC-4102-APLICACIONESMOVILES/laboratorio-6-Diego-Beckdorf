@@ -7,15 +7,14 @@ import android.support.annotation.NonNull;
 @Entity
 public class Form {
     @NonNull
-    @PrimaryKey
-    private String formId;
+    @PrimaryKey(autoGenerate = true)
+    private long formId;
     private String name;
     private String date;
     private String category;
     private String description;
 
-    public Form(@NonNull String formId, String name, String date, String category, String description) {
-        this.formId = formId;
+    public Form(String name, String date, String category, String description) {
         this.name = name;
         this.date = date;
         this.category = category;
@@ -23,8 +22,8 @@ public class Form {
     }
 
     @NonNull
-    public String getFormId() {return formId;}
-    public void setFormId(@NonNull String formId) {this.formId = formId;}
+    public long getFormId() {return formId;}
+    public void setFormId(@NonNull long formId) {this.formId = formId;}
 
     public String getName() {return name;}
     public void setName(String name) {this.name = name;}
