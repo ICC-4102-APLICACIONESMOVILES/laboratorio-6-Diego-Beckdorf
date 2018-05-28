@@ -2,6 +2,7 @@ package com.example.diego.continuos_lab.database_orm;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -20,6 +21,11 @@ public class Question {
 
     public Question(long formId, String statement){
         this.formId = formId;
+        this.statement = statement;
+    }
+
+    @Ignore
+    public Question(String statement){
         this.statement = statement;
     }
 

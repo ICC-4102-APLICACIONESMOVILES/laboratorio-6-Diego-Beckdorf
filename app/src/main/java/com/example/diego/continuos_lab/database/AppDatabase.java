@@ -11,7 +11,7 @@ import com.example.diego.continuos_lab.database_orm.Answer;
 import com.example.diego.continuos_lab.database_orm.AnswerSet;
 
 @Database(entities = {User.class, Form.class, Question.class, Answer.class, AnswerSet.class},
-        version = 2, exportSchema = false)
+        version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DaoAccess daoAccess() ;
 }

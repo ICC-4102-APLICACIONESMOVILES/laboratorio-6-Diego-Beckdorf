@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -39,12 +41,11 @@ import java.util.List;
  */
 public class NewFormFragment extends Fragment {
 
-    private MainActivity activity;
-    private List<String> questionStatementList;
+    private ArrayList<String> questionStatementList;
 
     public interface NewFormListener{
         void newForm(String name, String date, String category, String description,
-                     List<String> questionStatements);
+                     List<Question> questionList);
     }
     private NewFormListener listener;
 
@@ -59,8 +60,6 @@ public class NewFormFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String[] baseList = new String[] {""};
-        questionStatementList = new ArrayList<String>(Arrays.asList(baseList));
     }
 
     @Override
@@ -76,35 +75,49 @@ public class NewFormFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_new_form, container, false);
+        final View view = inflater.inflate(R.layout.fragment_new_form, container, false);
 
-        this.activity = (MainActivity) getActivity();
-
-        final Button submitButton = view.findViewById(R.id.formSubmit);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                TextView nameView = activity.findViewById(R.id.name);
-                final String name = nameView.getText().toString();
-                TextView dateView = activity.findViewById(R.id.date);
-                final String date = dateView.getText().toString();
-                Spinner categoryView = activity.findViewById(R.id.category);
-                final String category = categoryView.getSelectedItem().toString();
-                TextView descriptionView = activity.findViewById(R.id.description);
-                final String description = descriptionView.getText().toString();
-                listener.newForm(name, date, category, description, questionStatementList);
-            }
-        });
-
+        // Set question ListView Adapter
+        String[] array = {""};
+        questionStatementList= new ArrayList<String>(Arrays.asList(array));
         final ListView questionsContainerList = view.findViewById(R.id.questions_container_list);
         final NewQuestionListAdapter questionListAdapter = new NewQuestionListAdapter
                 (getContext(), questionStatementList);
         questionsContainerList.setAdapter(questionListAdapter);
 
+        // Set onClick for Add question button
         final Button addQuestionButton = view.findViewById(R.id.new_form_add_question_btn);
         addQuestionButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                questionStatementList.add("");
+                // TODO: check function to add new questions on mainthread
+                questionListAdapter.add("");
                 questionListAdapter.notifyDataSetChanged();
+            }
+        });
+
+        // Set onClick for Submit button
+        final Button submitButton = view.findViewById(R.id.formSubmit);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Get basic form data
+                TextView nameView = view.findViewById(R.id.name);
+                final String name = nameView.getText().toString();
+                TextView dateView = view.findViewById(R.id.date);
+                final String date = dateView.getText().toString();
+                Spinner categoryView = view.findViewById(R.id.category);
+                final String category = categoryView.getSelectedItem().toString();
+                TextView descriptionView = view.findViewById(R.id.description);
+                final String description = descriptionView.getText().toString();
+                // Creating questions from statements
+                List<Question> questionList = new ArrayList<>();
+                ListView questionListView = view.findViewById(R.id.questions_container_list);
+                for (int i = 0; i < questionListView.getChildCount(); i++) {
+                    View questionListViewChild = questionListView.getChildAt(i);
+                    EditText questionStatement = questionListViewChild.findViewById(R.id.new_question_statement);
+                    String statement = questionStatement.getText().toString();
+                    questionList.add(new Question(statement));
+                }
+                listener.newForm(name, date, category, description, questionList);
             }
         });
         return view;

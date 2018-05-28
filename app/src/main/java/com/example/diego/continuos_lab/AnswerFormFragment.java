@@ -8,13 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.example.diego.continuos_lab.database_orm.Answer;
 import com.example.diego.continuos_lab.database_orm.AnswerSet;
 import com.example.diego.continuos_lab.database_orm.Question;
 import com.example.diego.continuos_lab.layout_helpers.AnswerQuestionListAdapter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -23,10 +27,11 @@ import java.util.List;
  */
 public class AnswerFormFragment extends Fragment {
 
+    long formId;
     FormResponseSaver formResponseSaver;
     FormQuestionGetter formQuestionGetter;
     public interface FormResponseSaver {
-        void saveResponse(List<AnswerSet> answerSets);
+        void saveResponse(List<Answer> answerList);
     }
     public interface FormQuestionGetter {
         void getFormQuestions(AnswerQuestionListAdapter adapter);
@@ -53,13 +58,23 @@ public class AnswerFormFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.answer_form_fragment, container, false);
+        Bundle bundle = getArguments();
+        assert bundle != null;
+        formId = bundle.getLong("formId");
+        final View view = inflater.inflate(R.layout.fragment_answer_form, container, false);
         Button responseSubmitBtn = view.findViewById(R.id.form_response_submit);
         responseSubmitBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                List<AnswerSet> answerSets = null;
-                formResponseSaver.saveResponse(answerSets);
+                ListView answersListView = view.findViewById(R.id.form_questions_listview);
+                int answersListViewChildsCount = answersListView.getChildCount();
+                List<Answer> answerList = new ArrayList<>(Arrays.asList(new Answer[]{}));
+                for (int i = 0; i < answersListViewChildsCount; i++) {
+                    View answerListViewChild = answersListView.getChildAt(i);
+                    EditText answer = answerListViewChild.findViewById(R.id.question_statement_answer);
+                    String content = answer.getText().toString();
+                    answerList.add(new Answer(formId, content, 0, 0));
+                }
+                formResponseSaver.saveResponse(answerList);
             }
         });
         return view;

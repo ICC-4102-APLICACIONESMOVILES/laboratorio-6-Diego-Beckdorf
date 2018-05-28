@@ -1,10 +1,14 @@
 package com.example.diego.continuos_lab;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,20 +23,33 @@ import android.widget.Toast;
 
 import com.example.diego.continuos_lab.database.AppDatabase;
 import com.example.diego.continuos_lab.database_interface.DaoAccess;
+import com.example.diego.continuos_lab.database_orm.Answer;
 import com.example.diego.continuos_lab.database_orm.AnswerSet;
 import com.example.diego.continuos_lab.database_orm.Form;
 import com.example.diego.continuos_lab.database_orm.Question;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-                   NewFormFragment.NewFormListener,
-                   FormFragment.FormDeleter,
-                   AnswerFormFragment.FormResponseSaver{
+        NewFormFragment.NewFormListener,
+        FormFragment.FormDeleter,
+        AnswerFormFragment.FormResponseSaver {
 
     private static final String DATABASE_NAME = "forms_db";
     private AppDatabase appDatabase;
+    private Location currentLocation;
+
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(Location currentLocation) {
+        this.currentLocation = currentLocation;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +160,7 @@ public class MainActivity extends AppCompatActivity
                 NewFormFragment newFormFragment = new NewFormFragment();
                 newFormFragment.setArguments(getIntent().getExtras());
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, newFormFragment );
+                transaction.replace(R.id.fragment_container, newFormFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             } else if (fragmentId == R.id.nav_forms) {
@@ -169,7 +186,10 @@ public class MainActivity extends AppCompatActivity
     public void loadFormResponseFragment(long formId) {
         if (findViewById(R.id.fragment_container) != null) {
             AnswerFormFragment responseFragment = new AnswerFormFragment();
+            Bundle bundle = new Bundle();
+            bundle.putLong("formId", formId);
             responseFragment.setArguments(getIntent().getExtras());
+            responseFragment.setArguments(bundle);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, responseFragment);
             transaction.addToBackStack(null);
@@ -227,7 +247,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void newForm(final String name, final String date, final String category,
-                        final String description, final List<String> questionStatementList) {
+                        final String description, final List<Question> questionList) {
         @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -245,11 +265,10 @@ public class MainActivity extends AppCompatActivity
                 try {
                     long formId = dao.insertSingleForm(form);
                     Question question;
-                    for (int i = 0; i < questionStatementList.size(); i++) {
-                        question = new Question(formId, questionStatementList.get(i));
-                        System.out.println("Got statement");
+                    for (int i = 0; i < questionList.size(); i++) {
+                        question = questionList.get(i);
+                        question.setFormId(formId);
                         dao.insertSingleQuestion(question);
-                        System.out.println("Question inserted");
                     }
                     msg.obj = "Form created!";
                 } catch (Exception e) {
@@ -275,7 +294,7 @@ public class MainActivity extends AppCompatActivity
                     toastMessage = "Failed to delete form";
                 }
                 Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
-
+                navChangeFragment(R.id.nav_forms);
             }
         };
         new Thread(new Runnable() {
@@ -296,8 +315,33 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void saveResponse(final List<AnswerSet> answerSets) {
-        //TODO: Get answers on the onClickListener
+    public void saveResponse(final List<Answer> answerList) {
+        //TODO: Get user ref for answerSets
+        System.out.println("calling from  ainActivity");
+        final FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            System.out.println("Prmisions denied");
+            return;
+        }
+        fusedLocationProviderClient.getLastLocation().
+                addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null){
+                            currentLocation = location;
+                        }
+                    }
+                });
+        // TODO: set location to AnserSet object related with user
+        for (int i = 0; i < answerList.size(); i++) {
+            answerList.get(i).setLatitude(currentLocation.getLatitude());
+            answerList.get(i).setLongitude(currentLocation.getLongitude());
+        }
+
         @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -318,9 +362,10 @@ public class MainActivity extends AppCompatActivity
                 DaoAccess dao = getAppDatabase().daoAccess();
                 Message msg = new Message();
                 try {
-                    dao.insertAnswerSets(answerSets);
+                    dao.insertAnswers(answerList);
                     msg.obj = true;
                 } catch (Exception e) {
+                    System.out.println(e.getMessage());
                     msg.obj = false;
                 } finally {
                     handler.sendMessage(msg);

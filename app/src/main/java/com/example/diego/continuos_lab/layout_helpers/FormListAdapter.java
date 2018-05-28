@@ -52,8 +52,6 @@ public class FormListAdapter extends ArrayAdapter<Form>{
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 frag.getDeleterListener().callFormDelete(form);
-                MainActivity act = (MainActivity) getContext();
-                act.navChangeFragment(R.id.nav_forms);
             }
         });
         responseButton.setOnClickListener(new View.OnClickListener() {

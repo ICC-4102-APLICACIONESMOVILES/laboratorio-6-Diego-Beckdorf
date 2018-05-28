@@ -1,13 +1,13 @@
-<FrameLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.diego.continuos_lab.NewFormFragment">
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <!-- TODO: Update blank fragment layout -->
 
@@ -20,11 +20,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="@string/new_form_title"
-            app:layout_constraintBottom_toTopOf="@+id/name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="@string/new_form_title" />
 
         <EditText
             android:id="@+id/name"
@@ -34,11 +30,7 @@
             android:layout_marginStart="16dp"
             android:ems="10"
             android:inputType="textPersonName"
-            android:hint="@string/form_name_hint"
-            app:layout_constraintBottom_toTopOf="@+id/date"
-            app:layout_constraintEnd_toEndOf="@+id/textView2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            android:hint="@string/form_name_hint" />
 
         <EditText
             android:id="@+id/date"
@@ -49,11 +41,7 @@
             android:layout_marginStart="16dp"
             android:ems="10"
             android:hint="@string/form_date_hint"
-            android:inputType="date"
-            app:layout_constraintBottom_toTopOf="@+id/category"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            android:inputType="date" />
 
         <Spinner
             android:id="@+id/category"
@@ -61,11 +49,7 @@
             android:layout_width="320dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="57dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/description"
-            app:layout_constraintEnd_toEndOf="@+id/description"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/date" />
+            android:layout_marginStart="16dp" />
 
         <EditText
             android:id="@+id/description"
@@ -76,18 +60,13 @@
             android:layout_marginTop="24dp"
             android:ems="10"
             android:hint="@string/form_description_hint"
-            android:inputType="textMultiLine"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.571"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category" />
+            android:inputType="textMultiLine" />
 
         <LinearLayout
             android:id="@+id/questions_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/description">
+            android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,9 +90,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/new_form_submit"
-            app:layout_constraintTop_toBottomOf="@+id/questions_container"/>
-
-
-    </android.support.constraint.ConstraintLayout>
-</FrameLayout>
+            android:text="@string/new_form_submit"/>
+    </LinearLayout>
+</ScrollView>
